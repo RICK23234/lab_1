@@ -19,7 +19,7 @@ def to_celsium(temp: float, unit: str) -> float:
     if unit == "c":
         res = temp  # из Цельсия в Цельсию
     if unit == "k":
-        res = temp - 273.15  # из кельвина в цельсию
+        res = temp - 273.15  # из кельвина в Цельсию
     if unit == "f":
         res = (temp - 32) * 5 / 9  # из Фаренгейтов и Цельсию
 
@@ -32,7 +32,7 @@ def to_celsium(temp: float, unit: str) -> float:
 
 def from_celsium(temp: float, unit: str) -> float:
     """
-    Функция перевода из цельсия в любую единицу измерения температуры
+    Функция перевода из Цельсия в любую единицу измерения температуры
     """
     if unit == "c":
         res = temp  # из Цельсии в Цельсию
