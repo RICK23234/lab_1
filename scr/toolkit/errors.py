@@ -39,7 +39,7 @@ class DivisionZeroError(Error):
 
 class BelowAbsoluteZeroError(Error):
     def __init__(self) -> None:
-        super().__init__('Температура ниже абсолютного нуля (-273.15 градусов по C)')
+        super().__init__('Температура ниже абсолютного нуля (-273.15 °C)')
 
 
 class UnknownUnitError(Error):
@@ -49,8 +49,7 @@ class UnknownUnitError(Error):
 
 class IncompatibleUnitsError(Error):
     def __init__(self, unit1: str, unit2: str) -> None:
-        super().__init__(
-            f'Несовместимые единицы измерения "{unit1}" и "{unit2}"')
+        super().__init__(f'Несовместимые единицы измерения "{unit1}" и "{unit2}"')
 
 
 class UnknownCommandError(Error):

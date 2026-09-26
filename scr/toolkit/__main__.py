@@ -1,16 +1,16 @@
 import sys
-from argparse import *
+from argparse import ArgumentParser
 
 from .calculator import calculate_expression
 from .converter import convert
-from .errors import *
+from .errors import Error, FormatNumError
 
 
 def build():
     parser = ArgumentParser(prog="toolkit", description="Калькулятор и конвертер")
     subparsers = parser.add_subparsers(dest="command", required=True)
 
-    calc_parser = subparsers.add_parser(name="calc", help="вычислить выражение")
+    calc_parser = subparsers.add_parser(name="calc", help="вычислить выражение", prefix_chars="~")
     calc_parser.add_argument("expression")
 
     convert_parser = subparsers.add_parser(name="convert", help="конвертер")
@@ -46,7 +46,7 @@ def main(arg=None):
         elif arguments.command == "convert":
             run_convert(arguments)
     except Error as error:
-        print(f"\033[91mОшибка: {error} \033[0m", file=sys.stderr)
+        print(f"\033[1;91mОшибка: {error} \033[0m", file=sys.stderr)
         return 2
 
     return 0

@@ -1,8 +1,7 @@
 import pytest
 
 from scr.toolkit.converter import convert
-from scr.toolkit.errors import *
-
+from scr.toolkit.errors import UnknownUnitError, BelowAbsoluteZeroError, IncompatibleUnitsError
 
 def test_from_m_to_cm():
     assert convert(1, "m", "cm") == 100.0

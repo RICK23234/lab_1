@@ -9,10 +9,10 @@ mass = {"kg": 1.0, "g": 0.001}
 # кортеж хранения наименований единиц измерений температуры
 temp = ("c", "f", "k")
 
-absolute_zero_in_celsia = -273.15  # значение абсолютного нуля в Цельсиях
+absolute_zero_in_celsium = -273.15  # значение абсолютного нуля в Цельсиях
 
 
-def to_celsia(temp: float, unit: str) -> float:
+def to_celsium(temp: float, unit: str) -> float:
     """
     Функция перевода из любой единицы измерения температуры в Цельсию
     """
@@ -23,24 +23,24 @@ def to_celsia(temp: float, unit: str) -> float:
     if unit == "f":
         res = (temp - 32) * 5 / 9  # из Фаренгейтов и Цельсию
 
-    if res < absolute_zero_in_celsia:
+    if res < absolute_zero_in_celsium:
         # если итоговая температура ниже абсолютого нуля то ошибка
         raise BelowAbsoluteZeroError()
 
     return res
 
 
-def from_celsia(temp: float, unit: str) -> float:
+def from_celsium(temp: float, unit: str) -> float:
     """
     Функция перевода из цельсия в любую единицу измерения температуры
     """
     if unit == "c":
         res = temp  # из Цельсии в Цельсию
-    if unit == "k":
+    elif unit == "k":
         res = temp + 273.15  # из Цельсии в Кельвин
-    if unit == "f":
+    elif unit == "f":
         res = temp * 9 / 5 + 32  # из Цельсии в Фаренгейты
-
+    
     return res
 
 
@@ -61,8 +61,11 @@ def convert(value: float, from_unit: str, to_unit: str) -> float:
     """
     Функция для конвертации всех единиц измерения (массы, длины, температуры)
     """
-    from_group = detemine_group(from_unit.lower())
-    to_group = detemine_group(to_unit.lower())
+    from_unit = from_unit.lower()
+    to_unit = to_unit.lower()
+
+    from_group = detemine_group(from_unit)
+    to_group = detemine_group(to_unit)
 
     if from_group is None:
         raise UnknownUnitError(from_unit)
@@ -76,6 +79,6 @@ def convert(value: float, from_unit: str, to_unit: str) -> float:
     elif from_group == "lenth":
         res = value * lenth[from_unit] / lenth[to_unit]
     else:
-        res = from_celsia(to_celsia(value, from_unit), to_unit)
+        res = from_celsium(to_celsium(value, from_unit), to_unit)
 
     return res

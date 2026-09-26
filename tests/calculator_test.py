@@ -1,7 +1,7 @@
 import pytest
 
 from scr.toolkit.calculator import calculate_expression
-from scr.toolkit.errors import *
+from scr.toolkit.errors import EmptyExpressionError, DivisionZeroError, FormatExpressionError, MissingNumberError, MissingOperatorError, FormatNumError
 
 
 def test_summation():
