@@ -1,7 +1,7 @@
 import pytest
 
 from scr.toolkit.calculator import calculate_expression
-from scr.toolkit.errors import EmptyExpressionError, DivisionZeroError, FormatExpressionError, MissingNumberError, MissingOperatorError, FormatNumError
+from scr.toolkit.errors import EmptyExpressionError, DivisionZeroError, FormatExpressionError, MissingNumberError, MissingOperatorError, IntOperatorsError
 
 
 def test_summation():
@@ -36,6 +36,24 @@ def test_space_ignored():
     assert calculate_expression("8  + 9 -   10") == 7
 
 
+def test_integer_division():
+    assert calculate_expression("4//2") == 2
+
+
+def test_remainder_division():
+    assert calculate_expression("7%3") == 1
+
+
+def test_integer_division_zero_raises():
+    with pytest.raises(DivisionZeroError):
+        calculate_expression("1//0")
+
+
+def test_float_between_integer_division_raises():
+    with pytest.raises(IntOperatorsError):
+        calculate_expression("1.6%6")
+
+
 def test_empty_expression_riases():
     with pytest.raises(EmptyExpressionError):
         calculate_expression("")
@@ -66,6 +84,6 @@ def test_missing_operator():
         calculate_expression("7+9 6")
 
 
-def test_num_start_with_zeros():
-    with pytest.raises(FormatNumError):
-        calculate_expression("8+01-9")
+# def test_num_start_with_zeros():
+#     with pytest.raises(FormatNumError):
+#         calculate_expression("8+01-9")

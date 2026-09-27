@@ -12,7 +12,7 @@ temp = ("c", "f", "k")
 absolute_zero_in_celsium = -273.15  # значение абсолютного нуля в Цельсиях
 
 
-def to_celsium(temp: float, unit: str) -> float:
+def to_celsium(temp: float, unit: str) -> float | int:
     """
     Функция перевода из любой единицы измерения температуры в Цельсию
     """
@@ -30,7 +30,7 @@ def to_celsium(temp: float, unit: str) -> float:
     return res
 
 
-def from_celsium(temp: float, unit: str) -> float:
+def from_celsium(temp: float | int, unit: str) -> float:
     """
     Функция перевода из Цельсия в любую единицу измерения температуры
     """
@@ -57,7 +57,7 @@ def detemine_group(unit: str) -> str:
     return None
 
 
-def convert(value: float, from_unit: str, to_unit: str) -> float:
+def convert(value: float | int, from_unit: str, to_unit: str) -> float:
     """
     Функция для конвертации всех единиц измерения (массы, длины, температуры)
     """

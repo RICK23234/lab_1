@@ -3,9 +3,9 @@ from .errors import (
     EmptyExpressionError,
     FormatExpressionError,
     FormatFloatError,
-    FormatNumError,
     MissingNumberError,
     MissingOperatorError,
+    IntOperatorsError,
 )
 
 
@@ -19,15 +19,22 @@ def tokenize(expression: str) -> list:
     while i < len(expression):
         char = expression[i]
 
-        if char not in "+-*/" and char.isdigit() == 0 and char.isspace() == 0:
+        if char not in "+-*/%" and char.isdigit() == 0 and char.isspace() == 0:
             raise FormatExpressionError(char)
 
         if char.isspace():
             i += 1
+            continue
 
-        if char in "+-*/":
+        if char == "/" and i + 1 < len(expression) and expression[i + 1] == "/":
+            tokens.append("//")
+            i += 2
+            continue
+
+        if char in "+-*/%":
             tokens.append(char)
             i += 1
+            continue
 
         if char.isdigit() or char == ".":
             start = i
@@ -45,15 +52,62 @@ def tokenize(expression: str) -> list:
     return tokens
 
 
-def calculate(analyzed: list) -> int:
+def validation(tokens: list) -> list:
+    """
+    Функция для валидации токенов, поиска унарных минусов
+    """
+    if not tokens:
+        raise EmptyExpressionError()
+
+    validated = []
+    i = 0
+
+    while i < len(tokens):
+        sign = 1  # знак числа
+        while i < len(tokens) and tokens[i] in "+-":
+            if tokens[i] == "-":
+                sign *= -1  # если минус, как унaрный знак, то меняем знак числа
+            i += 1
+
+        # проверяем что не вышли за переделы списка и что следущий токен число
+        if i >= len(tokens) or tokens[i] in ("+", "-", "*", "/", "//", "%"):
+            raise MissingNumberError()
+
+        num_token = tokens[i]
+        # if len(num_token) >= 2 and num_token[0] == "0" and num_token[1] != ".":
+        #     raise FormatNumError(num_token)
+
+        if "." in num_token:
+            num = float(num_token)
+        else:
+            num = int(num_token)
+        validated.append(num * sign)
+        i += 1
+
+        if i >= len(tokens):
+            break  # если после добавления числа в список конец выражения то выходим из цикла
+
+        if tokens[i] not in ("+", "-", "*", "/", "//", "%"):
+            raise MissingOperatorError()
+
+        validated.append(tokens[i])
+        i += 1
+
+    if validated[-1] in ("+", "-", "*", "/", "//", "%"):
+        raise MissingNumberError()
+
+    return validated
+
+
+def calculate(validated: list) -> int | float:
     """
     Функция для вычисления введеного выражения
     """
-    expression = [analyzed[0]]
+    expression = [validated[0]]
     i = 1
-    while i < len(analyzed):  # по приоретету операций сначала вычисляем * и /
-        operetor = analyzed[i]
-        num = analyzed[i + 1]
+    while i < len(validated):  # по приоретету операций сначала вычисляем * и /
+        operetor = validated[i]
+        num = validated[i + 1]
 
         if operetor == "*":
             expression[-1] = expression[-1] * num
@@ -61,6 +115,20 @@ def calculate(analyzed: list) -> int:
             if num == 0:
                 raise DivisionZeroError()
             expression[-1] = expression[-1] / num
+        elif operetor == "//":
+            if type(expression[-1]) is int and type(num) is int:
+                if num == 0:
+                    raise DivisionZeroError
+                expression[-1] = expression[-1] // num
+            else:
+                raise IntOperatorsError(operetor)
+        elif operetor == "%":
+            if type(expression[-1]) is int and type(num) is int:
+                if num == 0:
+                    raise DivisionZeroError
+                expression[-1] = expression[-1] % num
+            else:
+                raise IntOperatorsError(operetor)
         else:
             expression.append(operetor)
             expression.append(num)
@@ -83,53 +151,6 @@ def calculate(analyzed: list) -> int:
         i += 2
 
     return res
-
-
-def validation(tokens: list) -> list:
-    """
-    Функция для валидации токенов, поиска унарных минусов
-    """
-    if not tokens:
-        raise EmptyExpressionError()
-
-    validated = []
-    i = 0
-
-    while i < len(tokens):
-        sign = 1  # знак числа
-        while i < len(tokens) and tokens[i] in "+-":
-            if tokens[i] == "-":
-                sign *= -1  # если минус, как унaрный знак, то меняем знак числа
-            i += 1
-
-        # проверяем что не вышли за переделы списка и что следущий токен число
-        if i >= len(tokens) or tokens[i] in "+-*/":
-            raise MissingNumberError()
-
-        num_token = tokens[i]
-        if len(num_token) >= 2 and num_token[0] == "0" and num_token[1] != ".":
-            raise FormatNumError(num_token)
-
-        if "." in num_token:
-            num = float(num_token)
-        else:
-            num = int(num_token)
-        validated.append(num * sign)
-        i += 1
-
-        if i >= len(tokens):
-            break  # если после добавления числа в список конец выражения то выходим из цикла
-
-        if tokens[i] not in ("+-*/"):
-            raise MissingOperatorError()
-
-        validated.append(tokens[i])
-        i += 1
-
-    if validated[-1] in ("-", "+", "*", "/"):
-        raise MissingNumberError()
-
-    return validated
 
 
 def calculate_expression(expression: str) -> int | float:

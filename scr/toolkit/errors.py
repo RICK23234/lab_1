@@ -55,6 +55,13 @@ class DivisionZeroError(Error):
         super().__init__('Деление на ноль')
 
 
+class IntOperatorsError(Error):
+    """// или % стоит между не целыми числами"""
+
+    def __init__(self, operator):
+        super().__init__(f'{operator} может стоять только между двуми целыми числами')
+
+        
 class BelowAbsoluteZeroError(Error):
     """Введенная температура ниже абсолютного нуля"""
 
