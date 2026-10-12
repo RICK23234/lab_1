@@ -47,10 +47,10 @@ def main(arg=None):
             run_convert(arguments)
     except Error as error:
         print(f"\033[1;91mОшибка: {error} \033[0m", file=sys.stderr)
-        sys.exit(2)
+        return 2
 
-    sys.exit(0)
+    return 0
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())
